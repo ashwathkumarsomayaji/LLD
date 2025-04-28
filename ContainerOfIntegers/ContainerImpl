@@ -1,0 +1,52 @@
+package containersofintegers;
+
+import java.util.Map;
+import java.util.TreeMap;
+
+public class ContainerImpl implements Container {
+    private final TreeMap<Integer, Integer> map = new TreeMap<>();
+    private int size = 0;
+    @Override
+    public void add(int value) {
+        map.put(value, map.getOrDefault(value, 0)+1);
+        size++;
+    }
+
+    @Override
+    public boolean delete(int value) {
+        if(!map.containsKey(value)) return false;
+
+        int count = map.get(value);
+        if(count == 1) {
+            map.remove(value);
+        } else {
+            map.put(value, count-1);
+        }
+        size--;
+        return true;
+    }
+
+    @Override
+    public int getMedian() {
+        if(size == 0){
+            throw new RuntimeException("Container is empty");
+        }
+        int mid = size/2;
+        int count = 0;
+
+        for(Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            count += entry.getValue();
+
+            //odd sized map.
+            if(size % 2 == 1 && count>mid){
+               return  entry.getKey();
+            }
+
+            //even sized map
+            if(size % 2 == 0 && count>=mid){
+                return  entry.getKey();
+            }
+        }
+        throw new RuntimeException("Unexpected error in the median calculation");
+    }
+}
